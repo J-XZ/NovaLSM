@@ -38,3 +38,16 @@ scatter_bench
 version_set_test
 
 tmp_pubkeys/
+scripts/cloud_lab_profile.py
+scripts/limit.conf
+scripts/sys_ulimit.conf
+scripts/ulimit.conf
+scripts/env/init.sh
+scripts/env/install-deps.sh
+scripts/env/nic.sh
+scripts/env/setup-all.sh
+scripts/env/setup-apt-ssh copy.sh
+scripts/env/setup-apt-ssh.sh
+scripts/env/setup-rdma.sh
+scripts/env/setup-ssh.sh
+scripts/env/sysctl.sh
