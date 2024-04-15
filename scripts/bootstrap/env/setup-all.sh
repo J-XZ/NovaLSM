@@ -8,22 +8,19 @@ sudo apt --yes autoremove
 
 bash $basedir/scripts/env/setup-rdma.sh
 
-
-nic=`netstat -i`
+nic=$(netstat -i)
 echo "$nic"
-IFS=' ' read -r -a array <<< $nic
+IFS=' ' read -r -a array <<<$nic
 echo "${array[0]}"
 echo "${#array[@]}"
 iface=""
-for element in "${array[@]}"
-do
+for element in "${array[@]}"; do
     if [[ $element == *"enp"* ]]; then
         echo "awefwef:$element"
         iface=$element
     fi
 done
 echo $iface
-
 
 sudo bash $basedir/scripts/env/nic.sh -i $iface
 sudo bash $basedir/scripts/env/sysctl.sh
@@ -68,16 +65,13 @@ sudo apt-get install -y sysstat
 echo "============"
 echo ""
 
-
-
 # Enable gdb history
-echo 'set history save on' >> ~/.gdbinit && chmod 600 ~/.gdbinit
+echo 'set history save on' >>~/.gdbinit && chmod 600 ~/.gdbinit
 
 cd /tmp/
 wget https://github.com/fmtlib/fmt/releases/download/6.1.2/fmt-6.1.2.zip
 unzip fmt-6.1.2.zip
 cd fmt-6.1.2/ && cmake . && make -j32 && sudo make install
-
 
 cd /tmp/
 wget https://github.com/Kitware/CMake/releases/download/v3.13.3/cmake-3.13.3.tar.gz
