@@ -36,3 +36,5 @@ nova_server_main_debug
 nova_subrange_sim
 scatter_bench
 version_set_test
+
+tmp_pubkeys/

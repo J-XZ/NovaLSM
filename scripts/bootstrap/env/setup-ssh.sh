@@ -1,6 +1,8 @@
 #!/bin/sh
 
-HOME=/users/haoyu
+user_name=ruixuan
+HOME=/users/${user_name}
+
 # Create the user SSH directory, just in case.
 mkdir $HOME/.ssh && chmod 700 $HOME/.ssh
 

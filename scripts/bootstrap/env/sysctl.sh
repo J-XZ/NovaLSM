@@ -82,6 +82,6 @@ sudo sysctl -w net.ipv4.tcp_adv_win_scale=1
 sudo sysctl -w net.ipv4.tcp_slow_start_after_idle=0
 
 
-sudo sysctl -w net.ipv4.ip_local_port_range="512 65535"
+sudo sysctl -w net.ipv4.ip_local_port_range="1024 65535"
 
 # sudo sysctl -w net.ipv4.route.flush=1
