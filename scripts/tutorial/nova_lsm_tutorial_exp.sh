@@ -17,9 +17,6 @@ dryrun="$2"
 mkdir -p $results
 mkdir -p $exp_results_dir
 
-nservers="3"
-nclients="6"
-
 # YCSB
 maxexecutiontime=300
 workload="workloadc"
@@ -322,11 +319,12 @@ major_compaction_max_parallism="32"
 major_compaction_max_tables_in_a_set="20"
 
 nmachines="7"
-nservers="6"
-number_of_ltcs="3"
 
-maxexecutiontime=1200
+nservers="6"
 nclients="1"
+
+number_of_ltcs="3"
+maxexecutiontime=1200
 dist="uniform"
 zipfianconstant="0.99"
 workload="workloadw"
