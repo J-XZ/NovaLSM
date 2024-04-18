@@ -6,13 +6,14 @@ home_dir="/users/ruixuan/NovaLSM"
 config_dir="$home_dir/config"
 db_dir="/users/ruixuan/novalsm_db"
 
+recordcount="$1"
+dryrun="$2"
+
 script_dir="$home_dir/scripts"
 cache_bin_dir="$home_dir/nova"
 client_bin_dir="/tmp/YCSB-Nova"
 results="/tmp/results"
-recordcount="$1"
 exp_results_dir="/users/ruixuan/nova-tutorial-$recordcount"
-dryrun="$2"
 
 mkdir -p $results
 mkdir -p $exp_results_dir
