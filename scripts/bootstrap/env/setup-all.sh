@@ -4,7 +4,8 @@ ssd_device=/dev/nvme0n1
 user_name=ruixuan
 basedir="/users/${user_name}/NovaLSM"
 
-iface=ens2f0np0
+# iface=ens2f0np0
+iface=$1
 
 export DEBIAN_FRONTEND=noninteractive
 

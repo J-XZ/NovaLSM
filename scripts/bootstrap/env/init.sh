@@ -12,22 +12,22 @@ for ((i = 0; i < numServers; i++)); do
 	# ssh -oStrictHostKeyChecking=no node$i "sudo apt-get --yes install screen"
 	# ssh -n -f -oStrictHostKeyChecking=no node$i screen -L -S env1 -dm "$basedir/scripts/env/setup-all.sh"
 	# echo "ssh -n -f -oStrictHostKeyChecking=no node$i screen -L -S env1 -dm \"$basedir/scripts/env/setup-all.sh\""
-	echo "$basedir/scripts/env/setup-all.sh"
+	echo "$basedir/scripts/env/setup-all.sh" 网卡名
 done
 
 # ssh -n -f -oStrictHostKeyChecking=no node0.xz.dpmfs-pg0.wisc.cloudlab.us screen -L -S env1 -dm "/users/ruixuan/NovaLSM/scripts/env/setup-all.sh"
 # ssh -n -f -oStrictHostKeyChecking=no node1.xz.dpmfs-pg0.wisc.cloudlab.us screen -L -S env1 -dm "/users/ruixuan/NovaLSM/scripts/env/setup-all.sh"
 
-sleep 10
+# sleep 10
 
-sleepcount="0"
+# sleepcount="0"
 
-for ((i = 0; i < numServers; i++)); do
-	while ssh -oStrictHostKeyChecking=no node$i "screen -list | grep -q env1"; do
-		((sleepcount++))
-		sleep 10
-		echo "waiting for node$i "
-	done
-done
+# for ((i = 0; i < numServers; i++)); do
+# 	while ssh -oStrictHostKeyChecking=no node$i "screen -list | grep -q env1"; do
+# 		((sleepcount++))
+# 		sleep 10
+# 		echo "waiting for node$i "
+# 	done
+# done
 
-echo "init env took $((sleepcount / 6)) minutes"
+# echo "init env took $((sleepcount / 6)) minutes"
