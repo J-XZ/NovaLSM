@@ -15,7 +15,7 @@ host="xz.dpmfs-pg0.wisc.cloudlab.us"
 rm -r ./tmp_pubkeys/
 mkdir -p ./tmp_pubkeys
 for ((i=0;i<END;i++)); do
-    echo "building server on node $i"
+    echo "0building server on node $i"
     echo "node: ${user_name}@node$i.${host}"
     echo "rsync -avzP $LOCAL_HOME/* ${user_name}@node$i.${host}:${limit_dir}/"
     rsync -avzP $LOCAL_HOME/* ${user_name}@node$i.${host}:${limit_dir}/
@@ -27,7 +27,7 @@ done
 echo ""
 
 for ((i=0;i<END;i++)); do
-    echo "building server on node $i"
+    echo "1building server on node $i"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i.${host} "sudo cp $limit_dir/ulimit.conf /etc/systemd/user.conf"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i.${host} "sudo cp $limit_dir/sys_ulimit.conf /etc/systemd/system.conf"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i.${host} "sudo cp $limit_dir/limit.conf /etc/security/limits.conf"
