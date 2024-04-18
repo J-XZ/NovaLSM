@@ -2,7 +2,7 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-sudo apt-get --yes install libibcm1 libibverbs1 ibverbs-utils librdmacm1 rdmacm-utils libdapl2 ibutils libibumad3 libmlx4-1 libmthca1 infiniband-diags  mstflint  perftest librdmacm-dev libmlx4-dev libibverbs-dev libevent-dev libibumad-dev
+sudo apt-get --y install libibcm1 libibverbs1 ibverbs-utils librdmacm1 rdmacm-utils libdapl2 ibutils libibumad3 libmlx4-1 libmthca1 infiniband-diags  mstflint  perftest librdmacm-dev libmlx4-dev libibverbs-dev libevent-dev libibumad-dev
 sudo apt-get -yq install collectl
 
 
