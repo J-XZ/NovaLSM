@@ -15,8 +15,8 @@ client_bin_dir="/tmp/YCSB-Nova"
 results="/tmp/results"
 exp_results_dir="/users/ruixuan/nova-tutorial-$recordcount"
 
-mkdir -p $results
-mkdir -p $exp_results_dir
+# mkdir -p $results
+# mkdir -p $exp_results_dir
 
 # YCSB
 maxexecutiontime=300
@@ -65,6 +65,69 @@ log_record_mode="none"
 num_log_replicas="1"
 zipfian_dist_file_path="/tmp/zipfian"
 try="0"
+
+change_cfg="false"
+
+value_size="1024"
+partition="range"
+zipfianconstant="0.99"
+
+block_cache_mb="0"
+enable_rdma="true"
+row_cache_mb="0"
+
+cc_nconn_workers="512"
+num_rdma_fg_workers="16"
+num_rdma_bg_workers="16"
+num_compaction_workers="256"
+num_storage_workers="256"
+num_recovery_threads="32"
+num_migration_threads="32"
+mem_pool_size_gb="30"
+
+enable_load_data="false"
+recover_dbs="true"
+enable_subrange="true"
+enable_lookup_index="true"
+enable_range_index="true"
+enable_detailed_db_stats="false"
+enable_flush_multiple_memtables="true"
+subrange_no_flush_num_keys="100"
+enable_subrange_reorg="false"
+
+scatter_policy="power_of_two"
+ltc_num_stocs_scatter_data_blocks="1"
+max_stoc_file_size_mb="18432"
+
+level="6"
+memtable_size_mb="16"
+sstable_size_mb="16"
+use_local_disk="false"
+num_sstable_replicas="1"
+
+l0_start_compaction_mb=$((4 * 1024))
+l0_stop_write_mb=$((10 * 1024))
+ltc_migration_policy="immediate"
+num_memtable_partitions="64"
+num_memtables="256"
+
+major_compaction_type="sc"
+major_compaction_max_parallism="32"
+major_compaction_max_tables_in_a_set="20"
+
+nmachines="7"
+
+nservers="2"
+nclients="1"
+
+number_of_ltcs="3"
+maxexecutiontime=1200
+dist="uniform"
+zipfianconstant="0.99"
+workload="workloadw"
+nclients_per_server="1"
+nthreads="512"
+
 function run_bench() {
 	servers=()
 	clis=()
@@ -72,11 +135,8 @@ function run_bench() {
 	i=0
 	n=0
 	while [ $n -lt $nservers ]; do
-		# if [[ $i == "9" ]]; then
-		# 	i=$((i+1))
-		# 	continue
-		# fi
 		servers+=("node$i")
+		echo "node$i"
 		i=$((i + 1))
 		n=$((n + 1))
 	done
@@ -269,68 +329,6 @@ function run_bench() {
 	done
 	sleep 10
 }
-
-change_cfg="false"
-
-value_size="1024"
-partition="range"
-zipfianconstant="0.99"
-
-block_cache_mb="0"
-enable_rdma="true"
-row_cache_mb="0"
-
-cc_nconn_workers="512"
-num_rdma_fg_workers="16"
-num_rdma_bg_workers="16"
-num_compaction_workers="256"
-num_storage_workers="256"
-num_recovery_threads="32"
-num_migration_threads="32"
-mem_pool_size_gb="30"
-
-enable_load_data="false"
-recover_dbs="true"
-enable_subrange="true"
-enable_lookup_index="true"
-enable_range_index="true"
-enable_detailed_db_stats="false"
-enable_flush_multiple_memtables="true"
-subrange_no_flush_num_keys="100"
-enable_subrange_reorg="false"
-
-scatter_policy="power_of_two"
-ltc_num_stocs_scatter_data_blocks="1"
-max_stoc_file_size_mb="18432"
-
-level="6"
-memtable_size_mb="16"
-sstable_size_mb="16"
-use_local_disk="false"
-num_sstable_replicas="1"
-
-l0_start_compaction_mb=$((4 * 1024))
-l0_stop_write_mb=$((10 * 1024))
-ltc_migration_policy="immediate"
-num_memtable_partitions="64"
-num_memtables="256"
-
-major_compaction_type="sc"
-major_compaction_max_parallism="32"
-major_compaction_max_tables_in_a_set="20"
-
-nmachines="7"
-
-nservers="6"
-nclients="1"
-
-number_of_ltcs="3"
-maxexecutiontime=1200
-dist="uniform"
-zipfianconstant="0.99"
-workload="workloadw"
-nclients_per_server="1"
-nthreads="512"
 
 run_bench
 
