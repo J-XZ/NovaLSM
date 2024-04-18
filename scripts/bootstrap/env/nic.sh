@@ -81,6 +81,8 @@ function intr_pattern() {
 function hardware_queues() {
     local driver=$1
     local intrs=$2
+    # echo "hardware_queues: $driver" 
+    # echo "$intrs $((intrs-1))"
     case $driver in
 	igb|ixgbe|bnx2)
 	    echo $intrs;;
@@ -179,7 +181,10 @@ fi
 # Enable RPS if number of cores and hardware cores are not equal
 if [[ ! $HW_QUEUES == $CORES ]]; then
     for i in /sys/class/net/$IFACE/queues/rx-*; do
-	printf "%x\n" $((2**CORES-1)) | xargs -i echo {} > $i/rps_cpus;
+    one_numa_cores=$((CORES/2))
+    # echo $one_numa_cores
+	printf "%x,%x\n" $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) | xargs -i echo {} > $i/rps_cpus;
+    # echo "printf \"%x,%x\n\" $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) | xargs -i echo {} > $i/rps_cpus;"
     done
     info_msg "    RPS enabled"
 else

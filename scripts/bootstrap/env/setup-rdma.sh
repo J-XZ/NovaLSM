@@ -14,6 +14,8 @@ sudo modprobe ib_ucm
 sudo modprobe ib_umad
 sudo modprobe ib_ipoib
 # RDMA devices low-level drivers
+sudo modprobe mlx5_core
+sudo modprobe mlx5_ib
 sudo modprobe mlx4_ib
 sudo modprobe mlx4_en
 sudo modprobe iw_cxgb3
