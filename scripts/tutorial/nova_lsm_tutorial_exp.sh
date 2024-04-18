@@ -1,8 +1,8 @@
 #!/bin/bash
 # home_dir="/proj/bg-PG0/haoyu"
 # home_dir="/proj/BG/haoyu"
+
 home_dir="/users/ruixuan/NovaLSM"
-host="xz.dpmfs-pg0.clemson.cloudlab.us"
 config_dir="$home_dir/config"
 db_dir="/users/ruixuan/novalsm_db"
 
@@ -147,15 +147,15 @@ function run_bench() {
 	fi
 
 	for m in ${machines[@]}; do
-		echo "remove $results at machine $m.${host}"
-		ssh -oStrictHostKeyChecking=no $m.${host} "sudo rm -rf $results && mkdir -p $results && chmod -R 777 $results"
-		ssh -oStrictHostKeyChecking=no $m.${host} "sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'"
+		echo "remove $results at machine $m"
+		ssh -oStrictHostKeyChecking=no $m "sudo rm -rf $results && mkdir -p $results && chmod -R 777 $results"
+		ssh -oStrictHostKeyChecking=no $m "sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'"
 	done
 
 	# restore the database image.
 	for s in ${servers[@]}; do
 		echo "restore database image $s"
-		ssh -oStrictHostKeyChecking=no $s.${host} "rm -rf /db/nova-db-$recordcount-1024/ && cp -r /db/snapshot-$cc_nranges_per_server-$nservers-$number_of_ltcs-$dist-$num_memtable_partitions-$memtable_size_mb-$zipfianconstant-$num_sstable_replicas/nova-db-$recordcount-1024/ /db/ &" &
+		ssh -oStrictHostKeyChecking=no $s "rm -rf /db/nova-db-$recordcount-1024/ && cp -r /db/snapshot-$cc_nranges_per_server-$nservers-$number_of_ltcs-$dist-$num_memtable_partitions-$memtable_size_mb-$zipfianconstant-$num_sstable_replicas/nova-db-$recordcount-1024/ /db/ &" &
 	done
 
 	sleep 10
