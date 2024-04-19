@@ -30,5 +30,5 @@ for ((i=0;i<END;i++)); do
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/ulimit.conf /etc/systemd/user.conf"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/sys_ulimit.conf /etc/systemd/system.conf"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/limit.conf /etc/security/limits.conf"
-    # ssh -oStrictHostKeyChecking=no ${user_name}@node$i.${host} "sudo reboot"
+    ssh -oStrictHostKeyChecking=no ${user_name}@node$i.${host} "sudo reboot"
 done

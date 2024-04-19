@@ -181,10 +181,8 @@ fi
 # Enable RPS if number of cores and hardware cores are not equal
 if [[ ! $HW_QUEUES == $CORES ]]; then
     for i in /sys/class/net/$IFACE/queues/rx-*; do
-    one_numa_cores=$((CORES/2))
-    # echo $one_numa_cores
-	printf "%x,%x\n" $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) | xargs -i echo {} > $i/rps_cpus;
-    echo "printf \"%x,%x\n\" $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) | xargs -i echo {} > $i/rps_cpus;"
+    one_numa_cores=$((CORES/4))
+	printf "%x,%x,%x,%x\n" $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) $((2**one_numa_cores-1))| xargs -i echo {} > $i/rps_cpus;
     done
     info_msg "    RPS enabled"
 else
