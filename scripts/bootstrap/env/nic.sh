@@ -184,7 +184,7 @@ if [[ ! $HW_QUEUES == $CORES ]]; then
     one_numa_cores=$((CORES/2))
     # echo $one_numa_cores
 	printf "%x,%x\n" $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) | xargs -i echo {} > $i/rps_cpus;
-    # echo "printf \"%x,%x\n\" $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) | xargs -i echo {} > $i/rps_cpus;"
+    echo "printf \"%x,%x\n\" $((2**one_numa_cores-1)) $((2**one_numa_cores-1)) | xargs -i echo {} > $i/rps_cpus;"
     done
     info_msg "    RPS enabled"
 else
