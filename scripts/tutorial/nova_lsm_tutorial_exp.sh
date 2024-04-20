@@ -6,8 +6,10 @@ home_dir="/users/ruixuan/NovaLSM"
 config_dir="$home_dir/config"
 db_dir="/users/ruixuan/novalsm_db"
 
-recordcount="$1"
-dryrun="$2"
+# recordcount="$1"
+# dryrun="$2"
+recordcount=10000
+dryrun=false
 
 script_dir="$home_dir/scripts"
 cache_bin_dir="$home_dir"
@@ -20,7 +22,7 @@ exp_results_dir="/users/ruixuan/nova-tutorial-$recordcount"
 
 # YCSB
 maxexecutiontime=300
-workload="workloadc"
+workload="workloadw"
 nthreads="16"
 debug="false"
 dist="zipfian"
@@ -86,7 +88,7 @@ num_migration_threads="32"
 mem_pool_size_gb="30"
 
 enable_load_data="false"
-recover_dbs="true"
+recover_dbs="false"
 enable_subrange="true"
 enable_lookup_index="true"
 enable_range_index="true"
@@ -119,11 +121,9 @@ nmachines="2"
 nservers="2"
 nclients="2"
 
-number_of_ltcs="2"
+number_of_ltcs="1"
 maxexecutiontime=1200
-dist="uniform"
 zipfianconstant="0.99"
-workload="workloadw"
 nclients_per_server="1"
 nthreads="512"
 
@@ -172,8 +172,6 @@ function run_bench() {
 		fi
 		nova_port=$((nova_port + 1))
 	done
-	echo "nova_all_servers: "${nova_all_servers[@]}
-	echo "nova_port: "$nova_port
 	# 每个server的port相同，nova_port是server的port + 1
 
 	nova_servers="${nova_servers:1}"
@@ -186,7 +184,7 @@ function run_bench() {
 	echo "current_time="$current_time
 
 	nstoc=$((nservers - number_of_ltcs))
-	echo "nservers: $nservers, number_of_ltcs: $number_of_ltcs, nstoc: $nstoc"
+	echo "nservers: $nservers, nltcs: $number_of_ltcs, nstoc: $nstoc"
 
 	result_dir_name="nova-zf-$zipfianconstant-nm-$num_memtables-lr-$num_log_replicas-try-$try-cfg-$change_cfg-d-$dist-w-$workload-ltc-$number_of_ltcs-stoc-$nstoc-l0-$l0_stop_write_mb-np-$num_memtable_partitions-nr-$cc_nranges_per_server"
 	echo "running experiment $result_dir_name"
@@ -259,10 +257,10 @@ function run_bench() {
 		echo "nova_rdma_port: $nova_rdma_port"
 		cmd="stdbuf --output=0 --error=0 ./nova_server_main --ltc_migration_policy=$ltc_migration_policy --enable_range_index=$enable_range_index --num_migration_threads=$num_migration_threads --num_sstable_replicas=$num_sstable_replicas --level=$level --l0_start_compaction_mb=$l0_start_compaction_mb --subrange_no_flush_num_keys=$subrange_no_flush_num_keys --enable_detailed_db_stats=$enable_detailed_db_stats --major_compaction_type=$major_compaction_type --major_compaction_max_parallism=$major_compaction_max_parallism --major_compaction_max_tables_in_a_set=$major_compaction_max_tables_in_a_set --enable_flush_multiple_memtables=$enable_flush_multiple_memtables --recover_dbs=$recover_dbs --num_recovery_threads=$num_recovery_threads  --sampling_ratio=1 --zipfian_dist_ref_counts=$zipfian_dist_file_path --client_access_pattern=$dist  --memtable_type=static_partition --enable_subrange=$enable_subrange --num_log_replicas=$num_log_replicas --log_record_mode=$log_record_mode --scatter_policy=$scatter_policy --number_of_ltcs=$number_of_ltcs --enable_lookup_index=$enable_lookup_index --l0_stop_write_mb=$l0_stop_write_mb --num_memtable_partitions=$num_memtable_partitions --num_memtables=$num_memtables --num_rdma_bg_workers=$num_rdma_bg_workers --db_path=$db_path --num_storage_workers=$num_storage_workers --stoc_files_path=$cc_stoc_files_path --max_stoc_file_size_mb=$max_stoc_file_size_mb --sstable_size_mb=$sstable_size_mb --ltc_num_stocs_scatter_data_blocks=$ltc_num_stocs_scatter_data_blocks --all_servers=$nova_servers --server_id=$server_id --mem_pool_size_gb=$mem_pool_size_gb --use_fixed_value_size=$value_size --ltc_config_path=$ltc_config_path --ltc_num_client_workers=$cc_nconn_workers --num_rdma_fg_workers=$num_rdma_fg_workers --num_compaction_workers=$num_compaction_workers --block_cache_mb=$block_cache_mb --row_cache_mb=$row_cache_mb --memtable_size_mb=$memtable_size_mb --cc_log_buf_size=$cc_log_buf_size --rdma_port=$rdma_port --rdma_max_msg_size=$rdma_max_msg_size --rdma_max_num_sends=$rdma_max_num_sends --rdma_doorbell_batch_size=$rdma_doorbell_batch_size --enable_rdma=$enable_rdma --enable_load_data=$enable_load_data --use_local_disk=$use_local_disk"
 		echo "$cmd"
-		su - ruixuan -c "ssh -oStrictHostKeyChecking=no $s \"mkdir -p $cc_stoc_files_path && mkdir -p $db_path && cd $cache_bin_dir && $cmd >& $results/server-$s-out &\"" &
+		# su - ruixuan -c "ssh -oStrictHostKeyChecking=no $s \"mkdir -p $cc_stoc_files_path && mkdir -p $db_path && cd $cache_bin_dir && $cmd >& $results/server-$s-out &\"" &
 		server_id=$((server_id + 1))
 		nova_rdma_port=$((nova_rdma_port + 1))
-		sleep 1
+		# sleep 1
 	done
 
 	sleep 30
@@ -270,9 +268,9 @@ function run_bench() {
 	for c in ${clis[@]}; do
 		for i in $(seq 1 $nclients_per_server); do
 			echo "creating client on $c-$i"
-			cmd="stdbuf --output=0 --error=0 bash $script_dir/run_ycsb.sh $nthreads $nova_all_servers $debug $partition $recordcount $maxexecutiontime $dist $value_size $workload $ltc_config_path $cardinality $operationcount $zipfianconstant 0"
+			cmd="stdbuf --output=0 --error=0 bash $script_dir/exp/run_ycsb.sh $nthreads $nova_all_servers $debug $partition $recordcount $maxexecutiontime $dist $value_size $workload $ltc_config_path $cardinality $operationcount $zipfianconstant 0"
 			echo "$cmd"
-			su - ruixuan -c "ssh -oStrictHostKeyChecking=no $c \"cd $client_bin_dir && $cmd >& $results/client-$c-$i-out &\"" &
+			# su - ruixuan -c "ssh -oStrictHostKeyChecking=no $c \"cd $client_bin_dir && $cmd >& $results/client-$c-$i-out &\"" &
 		done
 	done
 
@@ -331,7 +329,6 @@ function run_bench() {
 	# DB logs.
 	server_id=0
 	for s in ${servers[@]}; do
-		echo "copy db logs from $s"
 		su - ruixuan -c "ssh -oStrictHostKeyChecking=no $s \"mkdir -p $results/server-$server_id-dblogs/ && cp -r $db_path/*/LOG* $results/server-$server_id-dblogs/\""
 		# ssh -oStrictHostKeyChecking=no $s "rm -rf $db_path && rm -rf $cc_stoc_files_path"
 		server_id=$((server_id + 1))
