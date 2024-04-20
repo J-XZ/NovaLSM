@@ -14,7 +14,7 @@ LOCAL_HOME="/Users/jiangxuzhen/Downloads/e-lsmtree/NovaLSM/scripts/bootstrap"
 rm -r ./tmp_pubkeys/
 mkdir -p ./tmp_pubkeys
 for ((i=0;i<END;i++)); do
-    echo "0building server on node $i"
+    echo "0 building server on node $i"
     echo "node: ${user_name}@node$i"
     echo "rsync -avzP $LOCAL_HOME/* ${user_name}@node$i:${limit_dir}/"
     rsync -avzP $LOCAL_HOME/* ${user_name}@node$i:${limit_dir}/
@@ -26,7 +26,7 @@ done
 echo ""
 
 for ((i=0;i<END;i++)); do
-    echo "1building server on node $i"
+    echo "1 building server on node $i"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/ulimit.conf /etc/systemd/user.conf"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/sys_ulimit.conf /etc/systemd/system.conf"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/limit.conf /etc/security/limits.conf"

@@ -331,6 +331,7 @@ function run_bench() {
 	# DB logs.
 	server_id=0
 	for s in ${servers[@]}; do
+		echo "copy db logs from $s"
 		su - ruixuan -c "ssh -oStrictHostKeyChecking=no $s \"mkdir -p $results/server-$server_id-dblogs/ && cp -r $db_path/*/LOG* $results/server-$server_id-dblogs/\""
 		# ssh -oStrictHostKeyChecking=no $s "rm -rf $db_path && rm -rf $cc_stoc_files_path"
 		server_id=$((server_id + 1))
