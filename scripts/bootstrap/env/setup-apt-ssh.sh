@@ -27,8 +27,11 @@ echo ""
 
 for ((i=0;i<END;i++)); do
     echo "1 building server on node $i"
+    echo "$limit_dir"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/ulimit.conf /etc/systemd/user.conf"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/sys_ulimit.conf /etc/systemd/system.conf"
     ssh -oStrictHostKeyChecking=no ${user_name}@node$i "sudo cp $limit_dir/limit.conf /etc/security/limits.conf"
-    ssh -oStrictHostKeyChecking=no ${user_name}@node$i.${host} "sudo reboot"
+    echo "cp ok"
+    # ssh -oStrictHostKeyChecking=no ${user_name}@node$i.${host} "sudo reboot"
+    echo "need reboot $node$i"
 done
