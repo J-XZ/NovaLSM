@@ -1,13 +1,9 @@
 #!/bin/bash
-# home_dir="/proj/bg-PG0/haoyu"
-# home_dir="/proj/BG/haoyu"
 
 home_dir="/users/ruixuan/NovaLSM"
 config_dir="$home_dir/config"
 db_dir="/users/ruixuan/novalsm_db"
 
-# recordcount="$1"
-# dryrun="$2"
 recordcount=10000
 dryrun=false
 
@@ -16,12 +12,11 @@ cache_bin_dir="$home_dir"
 client_bin_dir="/tmp/YCSB-Nova"
 results="/tmp/results"
 exp_results_dir="/users/ruixuan/nova-tutorial-$recordcount"
-
-# mkdir -p $results
-# mkdir -p $exp_results_dir
+mkdir -p $results
+mkdir -p $exp_results_dir
 
 # YCSB
-maxexecutiontime=300
+maxexecutiontime=3000000
 workload="workloadw"
 nthreads="16"
 debug="false"
@@ -31,15 +26,12 @@ value_size="4096"
 operationcount="0"
 zipfianconstant="0.99"
 mem_pool_size_gb="32"
-partition="range"
 
 # CC
 cc_nconn_workers="8"
 num_rdma_fg_workers="8"
 num_storage_workers="8"
 num_compaction_workers="32"
-block_cache_mb="1"
-row_cache_mb="4096"
 memtable_size_mb="4"
 ltc_config_path=""
 cc_nreplicas_per_range="1"
@@ -48,9 +40,7 @@ cc_log_buf_size="1024"
 max_stoc_file_size_mb="4"
 sstable_size_mb="2"
 cc_stoc_files_path="/db/stoc_files"
-ltc_num_stocs_scatter_data_blocks="3"
 num_memtable_partitions="32"
-number_of_ltcs="3"
 cc_log_record_policy="exclusive"
 cc_log_max_file_size_mb="18"
 
@@ -78,20 +68,15 @@ block_cache_mb="0"
 enable_rdma="true"
 row_cache_mb="0"
 
-cc_nconn_workers="512"
-num_rdma_fg_workers="16"
 num_rdma_bg_workers="16"
-num_compaction_workers="256"
-num_storage_workers="256"
 num_recovery_threads="32"
 num_migration_threads="32"
-mem_pool_size_gb="30"
 
 enable_load_data="false"
 recover_dbs="false"
 enable_subrange="true"
 enable_lookup_index="true"
-enable_range_index="true"
+enable_range_index="false"
 enable_detailed_db_stats="false"
 enable_flush_multiple_memtables="true"
 subrange_no_flush_num_keys="100"
@@ -99,11 +84,8 @@ enable_subrange_reorg="false"
 
 scatter_policy="power_of_two"
 ltc_num_stocs_scatter_data_blocks="1"
-max_stoc_file_size_mb="18432"
 
 level="6"
-memtable_size_mb="16"
-sstable_size_mb="16"
 use_local_disk="false"
 num_sstable_replicas="1"
 
@@ -117,15 +99,14 @@ major_compaction_type="sc"
 major_compaction_max_parallism="32"
 major_compaction_max_tables_in_a_set="20"
 
-nmachines="2"
-nservers="2"
+nmachines="5"
+nservers="3"
 nclients="2"
 
-number_of_ltcs="1"
+number_of_ltcs="2"
 maxexecutiontime=1200
 zipfianconstant="0.99"
 nclients_per_server="1"
-nthreads="512"
 
 function run_bench() {
 	servers=()
@@ -177,8 +158,8 @@ function run_bench() {
 	nova_servers="${nova_servers:1}"
 	nova_all_servers="${nova_all_servers:1}"
 
-	echo "nova_servers: "$nova_servers
-	echo "nova_all_servers: "$nova_all_servers
+	echo "nova_servers: $nova_servers"
+	echo "nova_all_servers: $nova_all_servers"
 
 	current_time=$(date "+%Y-%m-%d-%H-%M-%S")
 	echo "current_time="$current_time
@@ -213,17 +194,25 @@ function run_bench() {
 	fi
 
 	for m in ${machines[@]}; do
-		echo "remove and make new $results at machine $m, drop cache at machine $m"
-		su - ruixuan -c "ssh -oStrictHostKeyChecking=no $m \"sudo rm -rf $results && mkdir -p $results && chmod -R 777 $results\""
-		su - ruixuan -c "ssh -oStrictHostKeyChecking=no $m \"sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'\""
+ 		echo "$m"
+		echo "remove and make new $results at machine $m, drop cache at machine $m"		
+ 		# su - ruixuan -c "ssh -oStrictHostKeyChecking=no $m \"sudo rm -rf $results && mkdir -p $results && chmod -R 777 $results\""
+		# su - ruixuan -c "ssh -oStrictHostKeyChecking=no $m \"sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'\""
+  		echo "sudo rm -rf $results && mkdir -p $results && chmod -R 777 $results"
+    		echo "sudo sh -c 'echo 3 >/proc/sys/vm/drop_caches'"
+		echo ""
+		echo ""
 	done
 
 	# restore the database image.
 	for s in ${servers[@]}; do
+ 		echo "$s"
 		echo "restore database image $s"
-		echo "ssh -oStrictHostKeyChecking=no $s \"rm -rf /db/nova-db-$recordcount-1024/ && cp -r /db/snapshot-$cc_nranges_per_server-$nservers-$number_of_ltcs-$dist-$num_memtable_partitions-$memtable_size_mb-$zipfianconstant-$num_sstable_replicas/nova-db-$recordcount-1024/ /db/ &\" " "&"
-		su - ruixuan -c "ssh -oStrictHostKeyChecking=no $s \"rm -rf /db/nova-db-$recordcount-1024/ && cp -r /db/snapshot-$cc_nranges_per_server-$nservers-$number_of_ltcs-$dist-$num_memtable_partitions-$memtable_size_mb-$zipfianconstant-$num_sstable_replicas/nova-db-$recordcount-1024/ /db/ &\" " &
-	done
+		echo "rm -rf /db/nova-db-$recordcount-1024/ && cp -r /db/snapshot-$cc_nranges_per_server-$nservers-$number_of_ltcs-$dist-$num_memtable_partitions-$memtable_size_mb-$zipfianconstant-$num_sstable_replicas/nova-db-$recordcount-1024/ /db/"
+		# su - ruixuan -c "ssh -oStrictHostKeyChecking=no $s \"rm -rf /db/nova-db-$recordcount-1024/ && cp -r /db/snapshot-$cc_nranges_per_server-$nservers-$number_of_ltcs-$dist-$num_memtable_partitions-$memtable_size_mb-$zipfianconstant-$num_sstable_replicas/nova-db-$recordcount-1024/ /db/ &\" " &
+		echo ""
+  		echo ""
+ 	done
 
 	for m in ${machines[@]}; do
 		echo "waiting for $m"
@@ -252,6 +241,7 @@ function run_bench() {
 
 	server_id=0
 	for s in ${servers[@]}; do
+ 		echo ""
 		echo "creating server on $s"
 		nova_rdma_port=$((rdma_port))
 		echo "nova_rdma_port: $nova_rdma_port"
@@ -261,15 +251,19 @@ function run_bench() {
 		server_id=$((server_id + 1))
 		nova_rdma_port=$((nova_rdma_port + 1))
 		# sleep 1
+  		echo ""
 	done
 
 	sleep 30
 
 	for c in ${clis[@]}; do
 		for i in $(seq 1 $nclients_per_server); do
+  			echo ""
 			echo "creating client on $c-$i"
+   			echo "$c"
 			cmd="stdbuf --output=0 --error=0 bash $script_dir/exp/run_ycsb.sh $nthreads $nova_all_servers $debug $partition $recordcount $maxexecutiontime $dist $value_size $workload $ltc_config_path $cardinality $operationcount $zipfianconstant 0"
 			echo "$cmd"
+   			echo ""
 			# su - ruixuan -c "ssh -oStrictHostKeyChecking=no $c \"cd $client_bin_dir && $cmd >& $results/client-$c-$i-out &\"" &
 		done
 	done
